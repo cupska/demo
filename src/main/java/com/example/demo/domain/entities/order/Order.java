@@ -1,9 +1,10 @@
 package com.example.demo.domain.entities.order;
 
-import com.example.demo.domain.entities.orderItem.OrderItem;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import com.example.demo.domain.entities.restaurant.RestaurantId;
 import com.example.demo.domain.entities.user.UserId;
-import com.example.demo.domain.valueObjects.OrderStatus;
 
 import lombok.Data;
 
@@ -14,33 +15,38 @@ public class Order {
     RestaurantId restaurantId;
     double totalPrice;
     OrderStatus status;
+    OrderItem[] orderItems;
+    DeliveryMethod deliveryMethod;
+    Delivery delivery;
 
-    private Order(OrderId orderId, UserId userId, RestaurantId restaurantId) {
-        this.orderId = orderId;
-        this.userId = userId;
-        this.restaurantId = restaurantId;
-        this.totalPrice = 0;
-        this.status = OrderStatus.PENDING; // Default status
+    private Order() {
+        this.orderId = new OrderId(java.util.UUID.randomUUID());
     }
 
-    public static Order createOrder(UserId userId, RestaurantId restaurantId,
-            Iterable<OrderItem> orderItems) {
-        OrderId orderId = new OrderId(java.util.UUID.randomUUID());
+    public static Order createOrder(UserId userId, RestaurantId restaurantId, OrderItem[] orderItems,
+            DeliveryMethod deliveryMethod,
+            Delivery delivery) {
 
-        if (orderItems == null || !orderItems.iterator().hasNext()) {
+        if (orderItems == null || orderItems.length <= 0) {
             throw new IllegalArgumentException("Order items cannot be null or empty");
         }
 
-        Order order = new Order(orderId, userId, restaurantId);
+        Order order = new Order();
 
-        for (OrderItem orderItem : orderItems) {
-            if (orderItem.getQuantity() <= 0) {
-                throw new IllegalArgumentException("Order item quantity must be greater than zero");
-            }
-
-            order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice() * orderItem.getQuantity());
-        }
+        order.setTotalPrice(calculateTotalPrice(orderItems));
 
         return order;
+    }
+
+    private static double calculateTotalPrice(OrderItem[] orderItems) {
+        return Stream.of(orderItems)
+                .mapToDouble(item -> {
+                    if (item.getQuantity() <= 0) {
+                        throw new IllegalArgumentException("Order item quantity must be greater than zero");
+                    }
+
+                    return item.getPrice() * item.getQuantity();
+                })
+                .sum();
     }
 }

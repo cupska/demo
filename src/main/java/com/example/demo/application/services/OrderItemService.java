@@ -3,8 +3,8 @@ package com.example.demo.application.services;
 import java.util.UUID;
 
 import com.example.demo.domain.entities.order.OrderId;
-import com.example.demo.domain.entities.orderItem.OrderItem;
 import com.example.demo.domain.repositories.OrderItemRepository;
+import com.example.demo.domain.valueObjects.OrderItem;
 
 public class OrderItemService {
     private final OrderItemRepository orderItemRepository;

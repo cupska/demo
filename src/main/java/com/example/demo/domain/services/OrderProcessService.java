@@ -1,7 +1,7 @@
 package com.example.demo.domain.services;
 
-import com.example.demo.domain.entities.orderItem.OrderItem;
 import com.example.demo.domain.entities.order.Order;
+import com.example.demo.domain.valueObjects.OrderItem;
 
 public class OrderProcessService {
     // public void createOrder(Iterable<OrderItem> orderItems) {

@@ -6,8 +6,8 @@ import org.springframework.data.repository.Repository;
 
 import com.example.demo.domain.entities.menu.MenuId;
 import com.example.demo.domain.entities.order.OrderId;
-import com.example.demo.domain.entities.orderItem.OrderItem;
 import com.example.demo.domain.entities.orderItem.OrderItemId;
+import com.example.demo.domain.valueObjects.OrderItem;
 
 public interface OrderItemRepository extends Repository<OrderItem, OrderItemId> {
 

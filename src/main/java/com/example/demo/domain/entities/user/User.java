@@ -1,7 +1,6 @@
 package com.example.demo.domain.entities.user;
 
 import com.example.demo.domain.valueObjects.Address;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators.UUIDGenerator;
 
 import lombok.Data;
 
@@ -13,6 +12,7 @@ public class User {
     private String password;
     private String phoneNumber;
     private Address address;
+    private UserReputation reputation;
 
     private User(UserId userId, String name, String email, String password, String phoneNumber, Address address) {
         this.userId = userId;
@@ -21,6 +21,7 @@ public class User {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.reputation = UserReputation.NEUTRAL; // Default reputation
     }
 
     public static User createUser(String name, String email, String password, String phoneNumber,

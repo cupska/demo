@@ -7,9 +7,9 @@ import org.springframework.data.repository.Repository;
 
 import com.example.demo.domain.entities.order.Order;
 import com.example.demo.domain.entities.order.OrderId;
-import com.example.demo.domain.entities.orderItem.OrderItem;
 import com.example.demo.domain.entities.restaurant.RestaurantId;
 import com.example.demo.domain.entities.user.UserId;
+import com.example.demo.domain.valueObjects.OrderItem;
 import com.example.demo.domain.valueObjects.OrderStatus;
 
 @org.springframework.stereotype.Repository

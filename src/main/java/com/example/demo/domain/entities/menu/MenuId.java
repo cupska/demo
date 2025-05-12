@@ -1,8 +1,10 @@
 package com.example.demo.domain.entities.menu;
 
-import lombok.Data;
+import java.util.UUID;
 
-@Data
+import lombok.Value;
+
+@Value
 public class MenuId {
     long id;
 }
