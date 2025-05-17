@@ -1,52 +1,62 @@
 package com.example.demo.domain.entities.order;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
+import com.example.demo.domain.entities.order.orderItem.OrderItem;
 import com.example.demo.domain.entities.restaurant.RestaurantId;
 import com.example.demo.domain.entities.user.UserId;
+import com.example.demo.domain.valueObjects.Money;
 
 import lombok.Data;
 
 @Data
 public class Order {
-    OrderId orderId;
-    UserId userId;
-    RestaurantId restaurantId;
-    double totalPrice;
+    private final OrderId orderId;
+    final UserId userId;
+    final RestaurantId restaurantId;
+    private Money totalPrice;
     OrderStatus status;
-    OrderItem[] orderItems;
+    List<OrderItem> orderItems;
     DeliveryMethod deliveryMethod;
     Delivery delivery;
 
-    private Order() {
+    private Order(UserId userId, RestaurantId restaurantId) {
         this.orderId = new OrderId(java.util.UUID.randomUUID());
+        this.userId = userId;
+        this.restaurantId = restaurantId;
+        this.status = OrderStatus.PENDING;
+        this.orderItems = new ArrayList<>();
+        this.totalPrice = new Money(0);
+
     }
 
-    public static Order createOrder(UserId userId, RestaurantId restaurantId, OrderItem[] orderItems,
+    public static Order createOrder(UserId userId, RestaurantId restaurantId, List<OrderItem> orderItems,
             DeliveryMethod deliveryMethod,
             Delivery delivery) {
 
-        if (orderItems == null || orderItems.length <= 0) {
-            throw new IllegalArgumentException("Order items cannot be null or empty");
-        }
-
-        Order order = new Order();
-
-        order.setTotalPrice(calculateTotalPrice(orderItems));
+        Order order = new Order(userId, restaurantId);
+        order.orderItems = orderItems;
+        order.totalPrice = orderItems.stream()
+                .map(OrderItem::subTotal)
+                .reduce(new Money(0), Money::add);
 
         return order;
     }
 
-    private static double calculateTotalPrice(OrderItem[] orderItems) {
-        return Stream.of(orderItems)
-                .mapToDouble(item -> {
-                    if (item.getQuantity() <= 0) {
-                        throw new IllegalArgumentException("Order item quantity must be greater than zero");
-                    }
+    public Order addOrderItem(OrderItem orderItem) {
+        if (orderItems == null) {
+            throw new IllegalStateException("Order items list is not initialized");
+        }
 
-                    return item.getPrice() * item.getQuantity();
-                })
-                .sum();
+        if (orderItems.stream().anyMatch(OrderItem -> OrderItem.getMenuId().equals(orderItem.getMenuId()))) {
+            throw new IllegalArgumentException("Order item already exists in the order");
+        }
+
+        orderItems.add(orderItem);
+        totalPrice.add(orderItem.subTotal());
+
+        return this;
     }
 }

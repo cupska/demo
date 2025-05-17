@@ -14,7 +14,7 @@ import com.example.demo.application.DTOs.OrderDTOs.OrderItemDTO;
 import com.example.demo.domain.entities.menu.MenuId;
 import com.example.demo.domain.entities.order.Order;
 import com.example.demo.domain.entities.order.OrderId;
-import com.example.demo.domain.entities.order.OrderItem;
+import com.example.demo.domain.entities.order.orderItem.OrderItem;
 import com.example.demo.domain.entities.restaurant.RestaurantId;
 import com.example.demo.domain.entities.user.UserId;
 import com.example.demo.domain.repositories.OrderRepository;
@@ -34,18 +34,10 @@ public class OrderService {
 
     public void createOrder(CreateOrderRequestDTO payload) {
 
-        OrderItem[] orderItems = Arrays.stream(payload.orderItems())
-                .map(orderItem -> new OrderItem(
-                        null,
-                        new MenuId(Long.parseLong(orderItem.menuId())),
-                        (short) orderItem.quantity(),
-                        0.0))
-                .toArray(OrderItem[]::new);
-
         UserId userId = new UserId(UUID.fromString(payload.userId()));
         RestaurantId restaurantId = new RestaurantId(UUID.fromString(payload.restaurantId()));
         Order order = Order.createOrder(userId,
-                restaurantId, orderItems, null, null);
+                restaurantId, payload., null, null);
 
         orderRepository.save(order);
     }
